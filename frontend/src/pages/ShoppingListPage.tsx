@@ -17,7 +17,6 @@ export default function ShoppingListPage() {
 
   return (
     <div className="page-shell shopping-page">
-      <p className="label label--mb-10">// Shopping_List</p>
       <div className="shopping-header">
         <div>
           <h1 className="shopping-title">Shopping</h1>

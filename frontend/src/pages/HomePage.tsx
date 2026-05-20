@@ -49,7 +49,6 @@ export default function HomePage() {
     <div className="page-shell">
       {!searched && (
         <div className="home-hero">
-          <p className="label label--mb-12">// Recipe_Scanner</p>
           <h1 className="home-headline">
             What can you cook<br /><span className="text-purple-gradient">tonight?</span>
           </h1>
@@ -97,7 +96,7 @@ export default function HomePage() {
                 </div>
                 <div ref={loaderRef} className="loader-sentinel">
                   <span className="loader-sentinel-text">
-                    {displayed.length < allRecipes.length ? '// Loading more…' : `// All ${allRecipes.length} results loaded`}
+                    {displayed.length < allRecipes.length ? 'Loading more…' : `All ${allRecipes.length} results loaded`}
                   </span>
                 </div>
               </>

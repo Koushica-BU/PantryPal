@@ -8,7 +8,6 @@ export default function FavouritesPage() {
   const { favourites } = useStore()
   return (
     <div className="page-shell">
-      <p className="label label--mb-10">// Recipe_Vault</p>
       <div className="favourites-header">
         <h1 className="favourites-title">Saved recipes</h1>
         {favourites.length > 0 && <span className="favourites-count">{favourites.length}</span>}

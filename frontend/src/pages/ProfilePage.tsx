@@ -28,7 +28,6 @@ export default function ProfilePage() {
 
   return (
     <div className="page-shell profile-page">
-      <p className="label label--mb-10">// User_Profile</p>
       <h1 className="profile-header">Profile</h1>
 
       <div className="card profile-card">
