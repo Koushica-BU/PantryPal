@@ -1,0 +1,143 @@
+/* ── RecipeFiltersBar ────────────────────── */
+
+.filters-wrapper {
+  position: relative;
+}
+
+.filters-toggle-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filters-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--bg-tint);
+  border: 1px solid var(--border-hi);
+  color: var(--text-3);
+  transition: all 0.15s;
+}
+
+.filters-toggle-btn--active {
+  background: var(--terra);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 0 16px rgba(212, 98, 42, 0.3);
+}
+
+.filters-clear-btn {
+  font-family: var(--font);
+  font-size: 10px;
+  color: var(--text-4);
+  background: none;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+}
+
+/* Chip */
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 5px;
+  background: var(--terra-p);
+  border: 1px solid rgba(212, 98, 42, 0.2);
+  font-family: var(--font);
+  font-size: 11px;
+  color: var(--terra);
+  text-transform: capitalize;
+}
+
+.filter-chip-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  color: var(--terra);
+  opacity: 0.7;
+}
+
+/* Dropdown */
+.filters-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+}
+
+.filters-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  width: 300px;
+  padding: 16px;
+  z-index: 30;
+  animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 40px rgba(212, 98, 42, 0.1), var(--shadow-lg);
+}
+
+.filters-dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.filters-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-4);
+  display: flex;
+}
+
+.filters-divider {
+  margin: 12px 0;
+}
+
+/* Section */
+.filter-section {
+  margin-bottom: 4px;
+}
+
+.filter-section-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.filter-section-items--scrollable {
+  max-height: 110px;
+  overflow-y: auto;
+}
+
+.filter-item-btn {
+  padding: 4px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-transform: capitalize;
+  font-family: var(--font);
+  font-size: 12px;
+  background: var(--bg-tint);
+  border: 1px solid var(--border);
+  color: var(--text-3);
+  transition: all 0.1s;
+}
+
+.filter-item-btn--active {
+  background: var(--terra);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(212, 98, 42, 0.3);
+}

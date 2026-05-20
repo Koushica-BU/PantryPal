@@ -1,0 +1,132 @@
+/* ── HomePage ────────────────────────────── */
+
+.home-hero {
+  max-width: 520px;
+  margin-bottom: 40px;
+}
+
+.home-headline {
+  font-family: var(--font);
+  font-weight: 800;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  letter-spacing: -0.04em;
+  color: var(--text);
+  margin-bottom: 10px;
+  line-height: 1.05;
+}
+
+.home-sub {
+  font-size: 15px;
+  color: var(--text-3);
+  font-weight: 300;
+  line-height: 1.65;
+}
+
+/* Layout when searched */
+.home-layout-searched {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.home-sidebar {
+  position: sticky;
+  top: 68px;
+}
+
+.home-sidebar--default {
+  max-width: 400px;
+}
+
+/* Results header */
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.results-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.scanning-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--terra);
+  box-shadow: 0 0 8px var(--terra);
+  animation: pulsePurple 1s ease-in-out infinite;
+}
+
+.results-count-text {
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+/* Recipe grid */
+.recipes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+/* Loader sentinel */
+.loader-sentinel {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.loader-sentinel-text {
+  font-family: var(--font);
+  font-size: 11px;
+  color: var(--text-4);
+  letter-spacing: 0.05em;
+}
+
+/* Skeleton */
+.skeleton-card-overflow { overflow: hidden; }
+.skeleton-aspect-16-10  { aspect-ratio: 16 / 10; }
+.skeleton-line-title    { height: 14px; width: 80%; }
+.skeleton-line-meta     { height: 11px; width: 50%; }
+
+.skeleton-card-body {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Empty state */
+.home-empty-state {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.home-empty-code {
+  font-family: var(--font);
+  font-size: 28px;
+  color: var(--text-4);
+  margin-bottom: 16px;
+}
+
+.home-empty-title {
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.home-empty-sub {
+  font-size: 13px;
+  color: var(--text-3);
+}

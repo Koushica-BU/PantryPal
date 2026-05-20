@@ -1,0 +1,51 @@
+/* ── FavouritesPage ──────────────────────── */
+
+.favourites-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.favourites-title {
+  font-family: var(--font);
+  font-weight: 800;
+  font-size: 32px;
+  letter-spacing: -0.04em;
+  color: var(--text);
+}
+
+.favourites-count {
+  font-family: var(--font);
+  font-size: 12px;
+  color: var(--terra);
+}
+
+.favourites-empty {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.favourites-empty-icon {
+  margin: 0 auto 16px;
+}
+
+.favourites-empty-title {
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.favourites-empty-sub {
+  font-size: 13px;
+  color: var(--text-3);
+  margin-bottom: 24px;
+}
+
+.favourites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}

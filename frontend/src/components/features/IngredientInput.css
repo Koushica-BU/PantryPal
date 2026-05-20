@@ -1,0 +1,138 @@
+/* ── IngredientInput ────────────────────── */
+
+.ingredient-card {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.ingredient-header h2 {
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.025em;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.ingredient-add-row {
+  display: flex;
+  gap: 8px;
+}
+
+.ingredient-add-btn {
+  padding: 10px 14px !important;
+  border-radius: 10px !important;
+}
+
+/* Quick add */
+.quick-add-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.quick-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font);
+  background: var(--bg-tint);
+  border: 1.5px solid var(--border);
+  color: var(--text-3);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.quick-btn--active {
+  background: var(--terra-p);
+  border-color: rgba(212, 98, 42, 0.25);
+  color: var(--terra);
+  transform: scale(1.02);
+}
+
+.quick-btn-emoji {
+  font-size: 14px;
+}
+
+/* Pantry items */
+.pantry-items-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.pantry-clear-btn {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-4);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: color 0.15s;
+}
+
+.pantry-clear-btn:hover {
+  color: #EF4444;
+}
+
+.pantry-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pantry-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--terra);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(212, 98, 42, 0.25);
+  animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pantry-tag-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.pantry-tag-remove:hover {
+  color: #fff;
+}
+
+/* Find recipes button */
+.find-recipes-btn {
+  width: 100%;
+  justify-content: center !important;
+  padding: 14px !important;
+  font-size: 15px !important;
+  border-radius: 12px !important;
+  margin-top: 2px;
+}
+
+/* Spinner */
+.btn-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2.5px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
