@@ -26,7 +26,10 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    // Don't intercept 401s from the auth endpoints themselves — let the
+    // login/register catch blocks handle those and show proper error messages.
+    const url = error.config?.url ?? ''
+    if (error.response?.status === 401 && !url.includes('/auth/')) {
       localStorage.removeItem('pantrypal_token')
       window.location.href = '/login'
     }

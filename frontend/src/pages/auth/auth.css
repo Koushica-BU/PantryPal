@@ -207,6 +207,63 @@
   font-weight: 600;
 }
 
+/* ── Password strength criteria ── */
+.pw-criteria {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+}
+.pw-rule {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: var(--text-3);
+  transition: color 0.2s;
+}
+.pw-rule svg { flex-shrink: 0; color: var(--text-3); transition: color 0.2s; }
+.pw-rule--pass { color: var(--terra-d, var(--terra)); }
+.pw-rule--pass svg { color: var(--terra-d, var(--terra)); }
+
+/* ── Signup success state ── */
+.auth-success-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 12px 0 4px;
+}
+.auth-success-icon-wrap {
+  margin-bottom: 16px;
+  animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes pop-in {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+.auth-success-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.03em;
+  margin-bottom: 6px;
+}
+.auth-success-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-2);
+  margin-bottom: 8px;
+}
+.auth-success-sub {
+  font-size: 0.78rem;
+  color: var(--text-3);
+}
+
 /* Spinner inside button */
 .auth-spinner {
   width: 14px;

@@ -1,111 +1,134 @@
 import { Request, Response } from 'express'
-import axios from 'axios'
+import { RecipeModel, IRecipe } from '../models/RecipeModel'
 
-const SPOONACULAR_BASE = 'https://api.spoonacular.com'
-const API_KEY = process.env.SPOONACULAR_API_KEY
+function toClient(doc: IRecipe, usedCount = 0, missedCount = 0) {
+  return {
+    id: String(doc._id),
+    title: doc.title,
+    category: doc.category,
+    cuisine: doc.cuisine,
+    instructions: doc.instructions,
+    thumbnail: doc.thumbnail,
+    tags: doc.tags,
+    sourceUrl: doc.sourceUrl,
+    readyInMinutes: doc.readyInMinutes,
+    servings: doc.servings,
+    vegetarian: doc.vegetarian,
+    vegan: doc.vegan,
+    glutenFree: doc.glutenFree,
+    dairyFree: doc.dairyFree,
+    usedIngredientCount: usedCount,
+    missedIngredientCount: missedCount,
+    ingredients: doc.ingredients,
+  }
+}
 
-// ─── Search by ingredients ────────────────────────────────────────────────────
+function scoreByIngredients(doc: IRecipe, searchTerms: string[]) {
+  const recipeNames = doc.ingredients.map(i => i.name.toLowerCase())
+  let used = 0
+  for (const term of searchTerms) {
+    if (recipeNames.some(n => n.includes(term) || term.includes(n))) used++
+  }
+  return { used, missed: doc.ingredients.length - used }
+}
+
+// ─── Search by pantry ingredients ─────────────────────────────────────────────
+
 export async function searchByIngredients(req: Request, res: Response) {
   try {
-    const { ingredients, number = 20, ranking = 1 } = req.query
-    // ranking=1 → maximize used ingredients, ranking=2 → minimize missing
+    const raw = (req.query.ingredients as string) || ''
+    const terms = raw.split(',').map(s => s.trim().toLowerCase()).filter(Boolean)
+    if (!terms.length) return res.json({ success: true, data: [] })
 
-    const { data } = await axios.get(`${SPOONACULAR_BASE}/recipes/findByIngredients`, {
-      params: {
-        apiKey: API_KEY,
-        ingredients,           // comma-separated e.g. "chicken,garlic,onion"
-        number,
-        ranking,
-        ignorePantry: true,
-      },
-    })
+    const all = await RecipeModel.find({}).lean()
 
-    res.json({ success: true, data })
+    const scored = all
+      .map(doc => {
+        const { used, missed } = scoreByIngredients(doc as unknown as IRecipe, terms)
+        return { doc, used, missed }
+      })
+      .filter(({ used }) => used > 0)
+      .sort((a, b) => b.used - a.used || a.missed - b.missed)
+      .slice(0, Number(req.query.number) || 24)
+
+    res.json({ success: true, data: scored.map(({ doc, used, missed }) => toClient(doc as unknown as IRecipe, used, missed)) })
   } catch (err) {
-    console.error('Spoonacular error:', err)
-    res.status(500).json({ success: false, message: 'Failed to fetch recipes' })
-  }
-}
-
-// ─── Get recipe details by ID ─────────────────────────────────────────────────
-export async function getRecipeById(req: Request, res: Response) {
-  try {
-    const { id } = req.params
-
-    const { data } = await axios.get(
-      `${SPOONACULAR_BASE}/recipes/${id}/information`,
-      {
-        params: {
-          apiKey: API_KEY,
-          includeNutrition: false,
-        },
-      },
-    )
-
-    res.json({ success: true, data })
-  } catch (err) {
-    console.error('Spoonacular error:', err)
-    res.status(500).json({ success: false, message: 'Failed to fetch recipe' })
-  }
-}
-
-// ─── Search by name / keyword ─────────────────────────────────────────────────
-export async function searchRecipes(req: Request, res: Response) {
-  try {
-    const { query, cuisine, diet, type, number = 20 } = req.query
-
-    const { data } = await axios.get(`${SPOONACULAR_BASE}/recipes/complexSearch`, {
-      params: {
-        apiKey: API_KEY,
-        query,
-        cuisine,
-        diet,
-        type,
-        number,
-        addRecipeInformation: true,
-        fillIngredients: true,
-      },
-    })
-
-    res.json({ success: true, data: data.results, total: data.totalResults })
-  } catch (err) {
-    console.error('Spoonacular error:', err)
+    console.error(err)
     res.status(500).json({ success: false, message: 'Failed to search recipes' })
   }
 }
 
-// ─── Get cuisines list ────────────────────────────────────────────────────────
-export async function getCuisines(_req: Request, res: Response) {
-  // Spoonacular supported cuisines (static list — no API call needed)
-  const cuisines = [
-    'African', 'American', 'British', 'Cajun', 'Caribbean',
-    'Chinese', 'Eastern European', 'European', 'French', 'German',
-    'Greek', 'Indian', 'Irish', 'Italian', 'Japanese', 'Jewish',
-    'Korean', 'Latin American', 'Mediterranean', 'Mexican',
-    'Middle Eastern', 'Nordic', 'Southern', 'Spanish', 'Thai', 'Vietnamese',
-  ]
-  res.json({ success: true, data: cuisines })
+// ─── Search by name / keyword + optional filters ───────────────────────────────
+
+export async function searchRecipes(req: Request, res: Response) {
+  try {
+    const { query = '', cuisine, diet, type, number = 24 } = req.query
+    const terms = String(query).toLowerCase().split(' ').filter(Boolean)
+
+    const filter: Record<string, unknown> = {}
+    if (cuisine) filter.cuisine = { $regex: cuisine, $options: 'i' }
+    if (type) filter.category = { $regex: type, $options: 'i' }
+    if (diet) {
+      const d = String(diet).toLowerCase()
+      if (d === 'vegetarian')  filter.vegetarian = true
+      else if (d === 'vegan')  filter.vegan = true
+      else if (d.includes('gluten')) filter.glutenFree = true
+      else if (d.includes('dairy'))  filter.dairyFree = true
+      else filter.tags = { $regex: diet, $options: 'i' }
+    }
+
+    const all = await RecipeModel.find(filter).lean()
+
+    const results = all
+      .map(doc => {
+        const { used, missed } = scoreByIngredients(doc as unknown as IRecipe, terms)
+        return { doc, used, missed }
+      })
+      .sort((a, b) => b.used - a.used || a.missed - b.missed)
+      .slice(0, Number(number))
+
+    res.json({ success: true, data: results.map(({ doc, used, missed }) => toClient(doc as unknown as IRecipe, used, missed)), total: results.length })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ success: false, message: 'Failed to search recipes' })
+  }
 }
 
-// ─── Get diets list ───────────────────────────────────────────────────────────
-export async function getDiets(_req: Request, res: Response) {
-  const diets = [
-    'Gluten Free', 'Ketogenic', 'Vegetarian', 'Lacto-Vegetarian',
-    'Ovo-Vegetarian', 'Vegan', 'Pescetarian', 'Paleo', 'Primal', 'Whole30',
-  ]
-  res.json({ success: true, data: diets })
+// ─── Get recipe by ID ──────────────────────────────────────────────────────────
+
+export async function getRecipeById(req: Request, res: Response) {
+  try {
+    const doc = await RecipeModel.findById(req.params.id).lean()
+    if (!doc) return res.status(404).json({ success: false, message: 'Recipe not found' })
+    res.json({ success: true, data: toClient(doc as unknown as IRecipe) })
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Failed to fetch recipe' })
+  }
 }
 
-// ─── Get nutrition info ───────────────────────────────────────────────────────
+// ─── Get nutrition (from our own data) ────────────────────────────────────────
+
 export async function getRecipeNutrition(req: Request, res: Response) {
   try {
-    const { id } = req.params
-    const { data } = await axios.get(
-      `${SPOONACULAR_BASE}/recipes/${id}/nutritionWidget.json`,
-      { params: { apiKey: API_KEY } },
-    )
-    res.json({ success: true, data })
+    const doc = await RecipeModel.findById(req.params.id).lean() as unknown as IRecipe | null
+    if (!doc) return res.status(404).json({ success: false, message: 'Recipe not found' })
+    res.json({ success: true, data: doc.nutrition })
   } catch (err) {
     res.status(500).json({ success: false, message: 'Failed to fetch nutrition' })
   }
+}
+
+// ─── Static lists ──────────────────────────────────────────────────────────────
+
+export async function getCuisines(_req: Request, res: Response) {
+  const cuisines = await RecipeModel.distinct('cuisine')
+  res.json({ success: true, data: cuisines.sort() })
+}
+
+export async function getDiets(_req: Request, res: Response) {
+  const diets = [
+    'Gluten Free', 'Ketogenic', 'Vegetarian', 'Vegan',
+    'Pescetarian', 'Paleo', 'Primal', 'Whole30',
+  ]
+  res.json({ success: true, data: diets })
 }

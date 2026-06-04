@@ -1,0 +1,426 @@
+.admin-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+/* ── Header ── */
+.admin-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.admin-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.5px;
+}
+.admin-sub {
+  font-size: 0.8rem;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+.admin-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Filters ── */
+.admin-filters {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.admin-search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 180px;
+}
+.admin-search-icon {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-3);
+}
+.admin-search {
+  width: 100%;
+  padding: 9px 12px 9px 34px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--text);
+  font-size: 0.82rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.admin-search:focus { border-color: var(--terra); }
+.admin-select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.admin-select {
+  padding: 9px 32px 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--text);
+  font-size: 0.82rem;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.admin-select:focus { border-color: var(--terra); }
+.admin-select--full { width: 100%; }
+.admin-select-icon {
+  position: absolute;
+  right: 10px;
+  pointer-events: none;
+  color: var(--text-3);
+}
+.admin-clear-btn { font-size: 0.8rem; padding: 6px 12px; }
+
+/* ── Table ── */
+.admin-table-wrap {
+  overflow-x: auto;
+  border-radius: 14px;
+  border: 1.5px solid var(--border);
+  background: var(--bg-card);
+}
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.admin-table thead tr {
+  border-bottom: 1.5px solid var(--border);
+}
+.admin-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.admin-row {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.12s;
+}
+.admin-row:last-child { border-bottom: none; }
+.admin-row:hover { background: var(--bg-hover, rgba(0,0,0,0.025)); }
+.admin-table td { padding: 12px 16px; vertical-align: middle; }
+
+.admin-cell-recipe {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 220px;
+}
+.admin-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--border);
+}
+.admin-recipe-title {
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.3;
+}
+.admin-badge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+.admin-badge--cuisine {
+  background: color-mix(in srgb, var(--terra) 12%, transparent);
+  color: var(--terra-d, var(--terra));
+}
+.admin-badge--cat {
+  background: var(--border);
+  color: var(--text-2);
+}
+.admin-cell-time {
+  font-size: 0.8rem;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+.admin-cell-diet { display: flex; gap: 4px; flex-wrap: wrap; min-width: 80px; }
+.admin-diet-tag {
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--terra) 10%, transparent);
+  color: var(--terra-d, var(--terra));
+}
+.admin-cell-actions { display: flex; gap: 6px; justify-content: flex-end; }
+.admin-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.admin-action-btn:hover { border-color: var(--terra); color: var(--terra); background: color-mix(in srgb, var(--terra) 8%, transparent); }
+.admin-action-btn--delete:hover { border-color: #e53e3e; color: #e53e3e; background: rgba(229,62,62,0.08); }
+
+.admin-empty { text-align: center; color: var(--text-3); font-size: 0.85rem; padding: 40px 0; }
+.admin-loading { display: flex; align-items: center; gap: 10px; color: var(--text-3); padding: 40px 0; font-size: 0.85rem; }
+
+/* ── Overlays ── */
+.admin-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  backdrop-filter: blur(4px);
+}
+
+/* ── Delete confirm ── */
+.admin-confirm {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 28px;
+  width: 100%;
+  max-width: 360px;
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow-float);
+}
+.admin-confirm-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.admin-confirm-sub { font-size: 0.82rem; color: var(--text-3); margin-bottom: 20px; }
+.admin-confirm-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.btn-danger {
+  padding: 9px 18px;
+  border-radius: 10px;
+  border: none;
+  background: #e53e3e;
+  color: #fff;
+  font-size: 0.83rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-danger:hover { opacity: 0.88; }
+
+/* ── Modal ── */
+.admin-modal {
+  background: var(--bg-card);
+  border-radius: 18px;
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow-float);
+  width: 100%;
+  max-width: 700px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.admin-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1.5px solid var(--border);
+  flex-shrink: 0;
+}
+.admin-modal-title { font-size: 1rem; font-weight: 700; color: var(--text); }
+.admin-modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.admin-modal-close:hover { border-color: var(--text); color: var(--text); }
+.admin-modal-body { flex: 1; overflow-y: auto; padding: 20px 24px; }
+.admin-modal-footer {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 16px 24px;
+  border-top: 1.5px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* ── Form sections ── */
+.admin-form-section { margin-bottom: 24px; }
+.admin-section-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-3);
+  margin-bottom: 10px;
+}
+.admin-section-hint {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  margin-bottom: 8px;
+  margin-top: -6px;
+}
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.admin-form-grid--4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+@media (max-width: 540px) {
+  .admin-form-grid { grid-template-columns: 1fr; }
+  .admin-form-grid--4 { grid-template-columns: 1fr 1fr; }
+}
+.admin-span-2 { grid-column: span 2; }
+.admin-label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-2);
+}
+.admin-input {
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.83rem;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+.admin-input:focus { border-color: var(--terra); }
+.admin-input[type="number"] { -moz-appearance: textfield; }
+.admin-input[type="number"]::-webkit-outer-spin-button,
+.admin-input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+.admin-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.83rem;
+  line-height: 1.55;
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.15s;
+  font-family: var(--font);
+}
+.admin-textarea:focus { border-color: var(--terra); }
+
+/* ── Checkboxes ── */
+.admin-checks { display: flex; gap: 20px; flex-wrap: wrap; }
+.admin-check-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.82rem;
+  color: var(--text-2);
+  cursor: pointer;
+  user-select: none;
+}
+.admin-check-label input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--terra); cursor: pointer; }
+
+/* ── Ingredient rows ── */
+.admin-ing-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.admin-ing-row { display: flex; gap: 8px; align-items: center; }
+.admin-ing-name { flex: 2; }
+.admin-ing-measure { flex: 1; }
+.admin-ing-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 7px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.admin-ing-remove:hover { border-color: #e53e3e; color: #e53e3e; }
+.admin-add-ing-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  padding: 6px 12px;
+}
+
+/* ── Instruction steps ── */
+.admin-step-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.admin-step-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  margin-top: 8px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--terra) 12%, transparent);
+  color: var(--terra-d, var(--terra));
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.admin-step-input {
+  flex: 1;
+  resize: vertical;
+  min-height: 52px;
+  font-family: var(--font);
+  line-height: 1.5;
+}
+
+/* ── Thumbnail preview ── */
+.admin-thumb-preview-wrap { display: flex; }
+.admin-thumb-preview {
+  height: 80px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1.5px solid var(--border);
+}
+
+/* ── Spinner ── */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 0.7s linear infinite; }

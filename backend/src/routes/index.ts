@@ -1,9 +1,9 @@
 import { Router } from 'express'
 import { body } from 'express-validator'
-import { auth } from '../middleware/auth'
+import { auth, adminAuth } from '../middleware/auth'
 import * as ctrl from '../controllers'
 import * as recipeCtrl from '../controllers/recipes'
-import { getRecipeNutrition } from '../controllers/recipes'
+import * as adminCtrl from '../controllers/adminRecipes'
 
 export const router = Router()
 
@@ -13,8 +13,8 @@ router.post(
   '/auth/register',
   [
     body('name').trim().notEmpty().withMessage('Name required'),
-    body('email').isEmail().normalizeEmail().withMessage('Valid email required'),
-    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+    body('email').isEmail().normalizeEmail({ gmail_remove_dots: false }).withMessage('Valid email required'),
+    body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters'),
   ],
   ctrl.register,
 )
@@ -22,7 +22,7 @@ router.post(
 router.post(
   '/auth/login',
   [
-    body('email').isEmail().normalizeEmail(),
+    body('email').isEmail().normalizeEmail({ gmail_remove_dots: false }),
     body('password').notEmpty(),
   ],
   ctrl.login,
@@ -57,3 +57,10 @@ router.get('/shopping-list', auth, ctrl.getShoppingList)
 router.post('/shopping-list/generate', auth, ctrl.generateShoppingList)
 router.patch('/shopping-list/:id', auth, ctrl.toggleShoppingItem)
 router.delete('/shopping-list', auth, ctrl.clearShoppingList)
+
+// ─── Admin — Recipe CRUD ──────────────────────────────────────────────────────
+
+router.get('/admin/recipes',        adminAuth, adminCtrl.listAllRecipes)
+router.post('/admin/recipes',       adminAuth, adminCtrl.createRecipe)
+router.put('/admin/recipes/:id',    adminAuth, adminCtrl.updateRecipe)
+router.delete('/admin/recipes/:id', adminAuth, adminCtrl.deleteRecipe)

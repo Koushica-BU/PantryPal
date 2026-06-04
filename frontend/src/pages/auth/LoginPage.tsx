@@ -51,7 +51,6 @@ export default function LoginPage() {
         </Link>
 
         <div className="card auth-card">
-          <p className="label label--mb-8">Auth_Module</p>
           <h1 className="auth-title">Sign in</h1>
 
           <div className="auth-fields">

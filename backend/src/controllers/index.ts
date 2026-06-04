@@ -20,7 +20,7 @@ export async function register(req: Request, res: Response) {
     res.status(201).json({
       success: true,
       token,
-      user: { id: user._id, name: user.name, email: user.email },
+      user: { id: user._id, name: user.name, email: user.email, isAdmin: user.isAdmin },
     })
   } catch (err) {
     res.status(500).json({ success: false, message: 'Server error' })
@@ -38,7 +38,7 @@ export async function login(req: Request, res: Response) {
     res.json({
       success: true,
       token,
-      user: { id: user._id, name: user.name, email: user.email },
+      user: { id: user._id, name: user.name, email: user.email, isAdmin: user.isAdmin },
     })
   } catch {
     res.status(500).json({ success: false, message: 'Server error' })

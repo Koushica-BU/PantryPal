@@ -1,55 +1,4 @@
-// ─── Recipe Types (Spoonacular) ──────────────────────────────────────────────
-
-export interface SpoonacularRecipe {
-  id: number
-  title: string
-  image: string
-  usedIngredientCount: number
-  missedIngredientCount: number
-  missedIngredients: SpoonacularIngredient[]
-  usedIngredients: SpoonacularIngredient[]
-  likes: number
-}
-
-export interface SpoonacularIngredient {
-  id: number
-  amount: number
-  unit: string
-  name: string
-  original: string
-  image: string
-}
-
-export interface SpoonacularRecipeDetail {
-  id: number
-  title: string
-  image: string
-  summary: string
-  instructions: string
-  extendedIngredients: SpoonacularExtendedIngredient[]
-  dishTypes: string[]
-  cuisines: string[]
-  diets: string[]
-  readyInMinutes: number
-  servings: number
-  sourceUrl: string
-  vegetarian: boolean
-  vegan: boolean
-  glutenFree: boolean
-  dairyFree: boolean
-  aggregateLikes: number
-}
-
-export interface SpoonacularExtendedIngredient {
-  id: number
-  name: string
-  original: string
-  amount: number
-  unit: string
-  image: string
-}
-
-// ─── Our Clean Recipe Type ────────────────────────────────────────────────────
+// ─── Recipe Types ─────────────────────────────────────────────────────────────
 
 export interface Recipe {
   id: string
@@ -83,6 +32,7 @@ export interface User {
   id: string
   name: string
   email: string
+  isAdmin?: boolean
   createdAt: string
 }
 

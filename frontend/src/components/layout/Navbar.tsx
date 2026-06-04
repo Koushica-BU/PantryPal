@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Search, Heart, ShoppingCart, Calendar, Sun, Moon } from 'lucide-react'
+import { Search, Heart, ShoppingCart, Calendar, Sun, Moon, ShieldCheck } from 'lucide-react'
 import { useStore } from '../../store/useStore'
 import './Navbar.css'
 
@@ -60,6 +60,15 @@ export default function Navbar() {
             <button onClick={toggleDarkMode} className="nav-dark-toggle">
               {darkMode ? <Sun size={14} strokeWidth={2} /> : <Moon size={14} strokeWidth={2} />}
             </button>
+
+            {user?.isAdmin && (
+              <Link to="/admin" className="nav-link-item" title="Admin">
+                <span className={`nav-link-label${pathname === '/admin' ? ' nav-link-label--active' : ''}`}>
+                  <ShieldCheck size={13} strokeWidth={pathname === '/admin' ? 2.5 : 1.75} />
+                  Admin
+                </span>
+              </Link>
+            )}
 
             {user ? (
               <Link to="/profile" className="nav-user-link">

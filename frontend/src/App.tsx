@@ -9,6 +9,7 @@ import FavouritesPage from './pages/FavouritesPage'
 import ShoppingListPage from './pages/ShoppingListPage'
 import MealPlanPage from './pages/MealPlanPage'
 import ProfilePage from './pages/ProfilePage'
+import AdminPage from './pages/AdminPage'
 import LoginPage from './pages/auth/LoginPage'
 import SignupPage from './pages/auth/SignupPage'
 import { useStore } from './store/useStore'
@@ -38,6 +39,7 @@ export default function App() {
         <Route path="/shopping-list" element={<AppLayout><ShoppingListPage /></AppLayout>} />
         <Route path="/meal-plan"     element={<AppLayout><MealPlanPage /></AppLayout>} />
         <Route path="/profile"       element={<AppLayout><ProfilePage /></AppLayout>} />
+        <Route path="/admin"         element={<AppLayout><AdminPage /></AppLayout>} />
       </Routes>
       <Toaster position="bottom-right" toastOptions={{
         style: {
