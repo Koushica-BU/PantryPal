@@ -1,10 +1,16 @@
 import mongoose, { Schema, Document } from 'mongoose'
 
+export interface IInstructionSection {
+  title?: string
+  steps: string[]
+}
+
 export interface IRecipe extends Document {
   title: string
   category: string
   cuisine: string
   instructions: string
+  instructionSections: IInstructionSection[]
   thumbnail: string
   tags: string[]
   sourceUrl: string | null
@@ -23,6 +29,11 @@ const RecipeSchema = new Schema<IRecipe>({
   category:       { type: String, default: '' },
   cuisine:        { type: String, default: '' },
   instructions:   { type: String, default: '' },
+  instructionSections: [{
+    title: { type: String, default: '' },
+    steps: [{ type: String }],
+    _id:   false,
+  }],
   thumbnail:      { type: String, default: '' },
   tags:           [{ type: String }],
   sourceUrl:      { type: String, default: null },

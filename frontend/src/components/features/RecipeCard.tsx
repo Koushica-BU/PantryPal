@@ -1,4 +1,5 @@
-import { Heart, Clock } from 'lucide-react'
+import { useState } from 'react'
+import { Heart, Clock, UtensilsCrossed } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useStore } from '../../store/useStore'
 import type { Recipe } from '../../types'
@@ -11,6 +12,7 @@ export default function RecipeCard({ recipe, matchedIngredients, totalIngredient
   const { isFavourite, addFavourite, removeFavourite } = useStore()
   const fav = isFavourite(recipe.id)
   const matchPct = matchedIngredients && totalIngredients ? Math.round((matchedIngredients / totalIngredients) * 100) : null
+  const [imgError, setImgError] = useState(false)
 
   const handleFav = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -22,9 +24,13 @@ export default function RecipeCard({ recipe, matchedIngredients, totalIngredient
     <Link to={`/recipe/${recipe.id}`} className="card-interactive recipe-card-link">
       {/* Image */}
       <div className="recipe-card-image">
-        <img src={recipe.thumbnail} alt={recipe.title}
-          className="recipe-card-img"
-          loading="lazy" />
+        {recipe.thumbnail && !imgError
+          ? <img src={recipe.thumbnail} alt={recipe.title}
+              className="recipe-card-img"
+              loading="lazy"
+              onError={() => setImgError(true)} />
+          : <div className="recipe-card-placeholder"><UtensilsCrossed size={40} strokeWidth={1.2} /></div>
+        }
         <div className="recipe-card-gradient" />
 
         {/* Bottom row */}

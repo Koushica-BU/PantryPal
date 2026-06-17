@@ -70,14 +70,33 @@
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
+  transition: opacity 0.2s ease;
+}
+
+.shopping-item--checked {
+  opacity: 0.4;
+}
+
+.shopping-item--checked .shopping-item-name {
+  text-decoration: line-through;
+  color: var(--text-3);
 }
 
 .shopping-item-checkbox {
   width: 18px;
   height: 18px;
   border-radius: 4px;
-  border: 1px solid var(--border-hi);
+  border: 1.5px solid var(--border-hi);
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.shopping-item-checkbox--checked {
+  background: var(--terra);
+  border-color: var(--terra);
 }
 
 .shopping-item-body {
@@ -91,6 +110,7 @@
   font-weight: 500;
   color: var(--text);
   text-transform: capitalize;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
 }
 
 .shopping-item-measure {
@@ -107,46 +127,11 @@
   letter-spacing: 0.03em;
 }
 
-/* Done section */
-.shopping-done-divider {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 0 5px;
+.shopping-item-remove {
+  opacity: 0;
+  transition: opacity 0.15s;
 }
 
-.shopping-done-label {
-  font-family: var(--font);
-  font-size: 10px;
-  color: var(--text-4);
-  letter-spacing: 0.06em;
-}
-
-.shopping-checked-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  opacity: 0.4;
-}
-
-.shopping-checked-box {
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
-  background: var(--terra);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.shopping-checked-name {
-  font-family: var(--font);
-  font-size: 13px;
-  color: var(--text-3);
-  text-decoration: line-through;
-  text-transform: capitalize;
+.shopping-item:hover .shopping-item-remove {
+  opacity: 1;
 }

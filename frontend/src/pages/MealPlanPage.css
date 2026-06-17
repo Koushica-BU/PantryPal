@@ -107,6 +107,14 @@
   object-fit: cover;
 }
 
+.meal-img-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-sunken);
+  color: var(--text-4);
+}
+
 .meal-card-body {
   padding: 5px 7px;
 }

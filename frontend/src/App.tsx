@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { useEffect } from 'react'
 import Navbar from './components/layout/Navbar'
@@ -24,13 +24,13 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const { darkMode } = useStore()
+  const { darkMode, user } = useStore()
   useEffect(() => { document.documentElement.classList.toggle('dark', darkMode) }, [darkMode])
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/"              element={<LandingPage />} />
+        <Route path="/"              element={user ? <Navigate to="/app" replace /> : <LandingPage />} />
         <Route path="/login"         element={<LoginPage />} />
         <Route path="/signup"        element={<SignupPage />} />
         <Route path="/app"           element={<AppLayout><HomePage /></AppLayout>} />

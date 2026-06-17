@@ -421,6 +421,84 @@
   border: 1.5px solid var(--border);
 }
 
+/* ── Tag chip input ── */
+.admin-tag-input-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  min-height: 42px;
+  padding: 6px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  background: var(--bg);
+  cursor: text;
+  transition: border-color 0.15s;
+}
+.admin-tag-input-wrap:focus-within { border-color: var(--terra); }
+.admin-tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px 3px 10px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--terra) 12%, transparent);
+  color: var(--terra-d, var(--terra));
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.admin-tag-chip-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px;
+  border: none;
+  background: transparent;
+  color: var(--terra-d, var(--terra));
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+.admin-tag-chip-remove:hover { opacity: 1; }
+.admin-tag-input {
+  flex: 1;
+  min-width: 120px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.83rem;
+  outline: none;
+  padding: 2px 0;
+}
+.admin-section-hint {
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--text-3);
+  text-transform: none;
+  letter-spacing: 0;
+  margin-left: 4px;
+}
+
+/* ── Instruction section builder ── */
+.admin-sections-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 10px; }
+.admin-section-block {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  background: var(--bg-sunken, var(--bg));
+}
+.admin-section-block-header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.admin-section-title-input { flex: 1; }
+.admin-section-move-btns { display: flex; gap: 4px; flex-shrink: 0; }
+.admin-ing-remove:disabled { opacity: 0.3; cursor: not-allowed; }
+.admin-ing-remove:disabled:hover { border-color: var(--border); color: var(--text-3); }
+.admin-add-section-btn { margin-top: 4px; }
+
 /* ── Spinner ── */
 @keyframes spin { to { transform: rotate(360deg); } }
 .spin { animation: spin 0.7s linear infinite; }

@@ -1,11 +1,17 @@
 import { useState } from 'react'
-import { Plus, X, ShoppingCart, Trash2 } from 'lucide-react'
+import { Plus, X, ShoppingCart, Trash2, UtensilsCrossed } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useStore } from '../store/useStore'
 import type { DayOfWeek, MealSlot, Recipe } from '../types'
 import { searchRecipes } from '../services/recipeService'
 import toast from 'react-hot-toast'
 import './MealPlanPage.css'
+
+function MealImg({ src, alt, className }: { src?: string; alt: string; className: string }) {
+  const [err, setErr] = useState(false)
+  if (!src || err) return <div className={`${className} meal-img-placeholder`}><UtensilsCrossed size={18} strokeWidth={1.2} /></div>
+  return <img src={src} alt={alt} className={className} onError={() => setErr(true)} />
+}
 
 const DAYS: DayOfWeek[] = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
 const SLOTS: MealSlot[] = ['breakfast','lunch','dinner']
@@ -38,7 +44,7 @@ function AddModal({ day, slot, onClose, onAdd }: { day: DayOfWeek; slot: MealSlo
           {!display.length && <p className="add-modal-empty">No results</p>}
           {display.map(r => (
             <button key={r.id} onClick={() => onAdd(r)} className="add-modal-recipe-btn">
-              <img src={r.thumbnail} alt={r.title} className="add-modal-recipe-img" />
+              <MealImg src={r.thumbnail} alt={r.title} className="add-modal-recipe-img" />
               <div className="add-modal-recipe-info">
                 <p className="add-modal-recipe-title">{r.title}</p>
                 <p className="add-modal-recipe-meta">{r.cuisine} · {r.category}</p>
@@ -104,7 +110,7 @@ export default function MealPlanPage() {
                     {recipe ? (
                       <div className="card meal-card">
                         <Link to={`/recipe/${recipe.id}`} className="meal-card-link">
-                          <img src={recipe.thumbnail} alt={recipe.title} className="meal-card-img" />
+                          <MealImg src={recipe.thumbnail} alt={recipe.title} className="meal-card-img" />
                           <div className="meal-card-body">
                             <p className="meal-card-title">{recipe.title}</p>
                           </div>

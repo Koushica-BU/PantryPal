@@ -1,4 +1,4 @@
-import { ShoppingCart, Trash2, CheckCheck, Download } from 'lucide-react'
+import { ShoppingCart, Trash2, Check, Download } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
@@ -6,8 +6,7 @@ import './ShoppingListPage.css'
 
 export default function ShoppingListPage() {
   const { shoppingList, toggleItem, removeItem, clearList } = useStore()
-  const unchecked = shoppingList.filter(i => !i.checked)
-  const checked   = shoppingList.filter(i =>  i.checked)
+  const remaining = shoppingList.filter(i => !i.checked).length
 
   const exportList = () => {
     const text = shoppingList.map(i => `${i.checked ? '[x]' : '[ ]'} ${i.measure ? i.measure + ' ' : ''}${i.name}`).join('\n')
@@ -20,7 +19,7 @@ export default function ShoppingListPage() {
       <div className="shopping-header">
         <div>
           <h1 className="shopping-title">Shopping</h1>
-          {unchecked.length > 0 && <p className="shopping-remaining-text">{unchecked.length} items_remaining</p>}
+          {remaining > 0 && <p className="shopping-remaining-text">{remaining} remaining</p>}
         </div>
         {shoppingList.length > 0 && (
           <div className="shopping-header-actions">
@@ -39,35 +38,28 @@ export default function ShoppingListPage() {
         </div>
       ) : (
         <div className="shopping-list">
-          {unchecked.map(item => (
-            <div key={item.id} onClick={() => toggleItem(item.id)} className="card-interactive shopping-item">
-              <div className="shopping-item-checkbox" />
+          {shoppingList.map(item => (
+            <div
+              key={item.id}
+              onClick={() => toggleItem(item.id)}
+              className={`card-interactive shopping-item${item.checked ? ' shopping-item--checked' : ''}`}
+            >
+              <div className={`shopping-item-checkbox${item.checked ? ' shopping-item-checkbox--checked' : ''}`}>
+                {item.checked && <Check size={11} strokeWidth={3} color="#fff" />}
+              </div>
               <div className="shopping-item-body">
                 <p className="shopping-item-name">{item.name}</p>
-                {item.measure && <p className="shopping-item-measure">{item.measure}</p>}
+                {item.measure    && <p className="shopping-item-measure">{item.measure}</p>}
                 {item.recipeTitle && <p className="shopping-item-recipe">from: {item.recipeTitle}</p>}
               </div>
-              <button onClick={e => { e.stopPropagation(); removeItem(item.id) }} className="btn-ghost btn-icon"><Trash2 size={13} /></button>
+              <button
+                onClick={e => { e.stopPropagation(); removeItem(item.id) }}
+                className="btn-ghost btn-icon shopping-item-remove"
+              >
+                <Trash2 size={13} />
+              </button>
             </div>
           ))}
-
-          {checked.length > 0 && (
-            <>
-              <div className="shopping-done-divider">
-                <div className="divider flex-1" />
-                <span className="shopping-done-label">DONE ({checked.length})</span>
-                <div className="divider flex-1" />
-              </div>
-              {checked.map(item => (
-                <div key={item.id} onClick={() => toggleItem(item.id)} className="shopping-checked-item">
-                  <div className="shopping-checked-box">
-                    <CheckCheck size={10} strokeWidth={3} color="#fff" />
-                  </div>
-                  <p className="shopping-checked-name">{item.name}</p>
-                </div>
-              ))}
-            </>
-          )}
         </div>
       )}
     </div>

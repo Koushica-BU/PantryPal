@@ -248,13 +248,61 @@
   top: 70px;
 }
 
+.ingredients-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
 .ingredients-heading {
   font-family: var(--font);
   font-weight: 700;
   font-size: 16px;
   color: var(--text);
-  margin-bottom: 14px;
   letter-spacing: -0.02em;
+}
+
+/* Serving scaler */
+.serving-scaler {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.serving-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--text-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.serving-btn:hover:not(:disabled) {
+  border-color: var(--terra);
+  color: var(--terra);
+}
+
+.serving-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.serving-count {
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  min-width: 36px;
+  text-align: center;
 }
 
 .ingredients-count {
@@ -282,6 +330,18 @@
 
 .ingredient-item--have {
   background: rgba(122, 158, 126, 0.08);
+}
+
+.ingredient-item--owned {
+  background: rgba(122, 158, 126, 0.05);
+}
+
+.ingredient-item--tappable {
+  cursor: pointer;
+}
+
+.ingredient-item--tappable:hover {
+  background: var(--bg-sunken);
 }
 
 .ingredient-img {
@@ -332,6 +392,39 @@
   text-decoration: none;
   margin-top: 14px;
 }
+
+/* Hero image placeholder */
+.recipe-hero-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-sunken, var(--border));
+  color: var(--text-4);
+}
+
+/* Instruction sections */
+.instruction-section { padding: 20px 22px; }
+.instruction-section:first-child { padding-top: 22px; }
+.instruction-section:last-child  { padding-bottom: 22px; }
+
+.instruction-section-title {
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text);
+  margin-bottom: 14px;
+  letter-spacing: -0.02em;
+}
+
+.instruction-section-divider {
+  border: none;
+  border-top: 1.5px solid var(--border);
+  margin: 0;
+}
+
+.instructions-card { padding: 0; overflow: hidden; }
 
 /* Heart icon fill states */
 .heart-fill-active   { fill: #fff; }

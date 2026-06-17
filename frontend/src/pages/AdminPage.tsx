@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, type KeyboardEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Pencil, Trash2, X, ChevronDown, Search, Loader2 } from 'lucide-react'
+import { Plus, Pencil, Trash2, X, ChevronDown, ChevronUp, Search, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useStore } from '../store/useStore'
 import { adminService, type AdminRecipe, type RecipeFormData } from '../services/adminService'
@@ -13,46 +13,44 @@ const CUISINES = [
   'Mediterranean', 'Mexican', 'Middle Eastern', 'Spanish', 'Thai', 'Vietnamese',
 ]
 
+type Section = { title: string; steps: string[] }
+
+const BLANK_SECTION: Section = { title: '', steps: [''] }
+
 const BLANK: RecipeFormData = {
   title: '', category: 'dinner', cuisine: 'American', thumbnail: '',
   readyInMinutes: 30, servings: 2,
   vegetarian: false, vegan: false, glutenFree: false, dairyFree: false,
-  tags: [], instructions: '',
+  tags: [], instructions: '', instructionSections: [],
   ingredients: [{ name: '', measure: '' }],
   nutrition: { calories: '', protein: '', carbs: '', fat: '' },
 }
 
-function parseInstructions(str: string): string[] {
-  if (!str.trim()) return ['']
+function parseInstructionsToSection(str: string): Section {
+  if (!str.trim()) return BLANK_SECTION
   const steps = str
     .replace(/<[^>]*>/g, '')
     .split(/\d+\./)
     .map(s => s.trim())
     .filter(Boolean)
-  return steps.length ? steps : ['']
-}
-
-function stepsToString(steps: string[]): string {
-  return steps
-    .filter(s => s.trim())
-    .map((s, i) => `${i + 1}. ${s.trim()}`)
-    .join(' ')
+  return { title: '', steps: steps.length ? steps : [''] }
 }
 
 export default function AdminPage() {
   const { user } = useStore()
   const navigate = useNavigate()
 
-  const [recipes, setRecipes]         = useState<AdminRecipe[]>([])
-  const [loading, setLoading]         = useState(true)
-  const [search, setSearch]           = useState('')
+  const [recipes, setRecipes]             = useState<AdminRecipe[]>([])
+  const [loading, setLoading]             = useState(true)
+  const [search, setSearch]               = useState('')
   const [filterCuisine, setFilterCuisine] = useState('')
-  const [showModal, setShowModal]     = useState(false)
-  const [editId, setEditId]           = useState<string | null>(null)
-  const [form, setForm]               = useState<RecipeFormData>(BLANK)
-  const [steps, setSteps]             = useState<string[]>([''])
-  const [saving, setSaving]           = useState(false)
-  const [deleteId, setDeleteId]       = useState<string | null>(null)
+  const [showModal, setShowModal]         = useState(false)
+  const [editId, setEditId]               = useState<string | null>(null)
+  const [form, setForm]                   = useState<RecipeFormData>(BLANK)
+  const [sections, setSections]           = useState<Section[]>([{ ...BLANK_SECTION }])
+  const [tagInput, setTagInput]           = useState('')
+  const [saving, setSaving]               = useState(false)
+  const [deleteId, setDeleteId]           = useState<string | null>(null)
 
   useEffect(() => {
     if (!user?.isAdmin) { navigate('/app'); return }
@@ -75,7 +73,8 @@ export default function AdminPage() {
 
   function openAdd() {
     setForm(BLANK)
-    setSteps([''])
+    setSections([{ ...BLANK_SECTION }])
+    setTagInput('')
     setEditId(null)
     setShowModal(true)
   }
@@ -86,11 +85,20 @@ export default function AdminPage() {
       thumbnail: r.thumbnail, readyInMinutes: r.readyInMinutes,
       servings: r.servings, vegetarian: r.vegetarian, vegan: r.vegan,
       glutenFree: r.glutenFree, dairyFree: r.dairyFree,
-      tags: r.tags, instructions: r.instructions,
+      tags: r.tags ?? [], instructions: r.instructions,
+      instructionSections: [],
       ingredients: r.ingredients.length ? r.ingredients : [{ name: '', measure: '' }],
       nutrition: (r as any).nutrition ?? BLANK.nutrition,
     })
-    setSteps(parseInstructions(r.instructions))
+
+    const existing = (r as any).instructionSections as Section[] | undefined
+    if (existing?.length) {
+      setSections(existing.map(s => ({ title: s.title ?? '', steps: s.steps.length ? s.steps : [''] })))
+    } else {
+      setSections([parseInstructionsToSection(r.instructions)])
+    }
+
+    setTagInput('')
     setEditId(r.id)
     setShowModal(true)
   }
@@ -98,13 +106,18 @@ export default function AdminPage() {
   async function handleSave() {
     if (!form.title.trim()) { toast.error('Title is required'); return }
     if (!form.ingredients.some(i => i.name.trim())) { toast.error('Add at least one ingredient'); return }
-    if (!steps.some(s => s.trim())) { toast.error('Add at least one instruction step'); return }
+    if (!sections.some(s => s.steps.some(st => st.trim()))) { toast.error('Add at least one instruction step'); return }
     setSaving(true)
     try {
+      const instructionSections = sections
+        .filter(s => s.steps.some(st => st.trim()))
+        .map(s => ({ title: s.title.trim(), steps: s.steps.filter(st => st.trim()) }))
+
       const clean: RecipeFormData = {
         ...form,
         ingredients: form.ingredients.filter(i => i.name.trim()),
-        instructions: stepsToString(steps),
+        instructionSections,
+        instructions: '',
       }
       if (editId) {
         const updated = await adminService.updateRecipe(editId, clean)
@@ -132,6 +145,26 @@ export default function AdminPage() {
   const setField = useCallback(<K extends keyof RecipeFormData>(k: K, v: RecipeFormData[K]) =>
     setForm(f => ({ ...f, [k]: v })), [])
 
+  // ── Tag helpers ──────────────────────────────────────────────────────────────
+
+  function commitTag(raw: string) {
+    const tag = raw.trim().toLowerCase().replace(/,+$/, '')
+    if (!tag) return
+    setForm(f => ({ ...f, tags: f.tags.includes(tag) ? f.tags : [...f.tags, tag] }))
+    setTagInput('')
+  }
+
+  function onTagKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); commitTag(tagInput) }
+    if (e.key === 'Backspace' && !tagInput) setForm(f => ({ ...f, tags: f.tags.slice(0, -1) }))
+  }
+
+  function removeTag(tag: string) {
+    setForm(f => ({ ...f, tags: f.tags.filter(t => t !== tag) }))
+  }
+
+  // ── Ingredient helpers ───────────────────────────────────────────────────────
+
   const setIngredient = (i: number, field: 'name' | 'measure', val: string) =>
     setForm(f => {
       const ings = [...f.ingredients]
@@ -145,13 +178,40 @@ export default function AdminPage() {
   const removeIngredient = (i: number) =>
     setForm(f => ({ ...f, ingredients: f.ingredients.filter((_, idx) => idx !== i) }))
 
-  const setStep = (i: number, val: string) =>
-    setSteps(ss => { const next = [...ss]; next[i] = val; return next })
+  // ── Section / step helpers ───────────────────────────────────────────────────
 
-  const addStep = () => setSteps(ss => [...ss, ''])
+  const addSection = () => setSections(ss => [...ss, { title: '', steps: [''] }])
 
-  const removeStep = (i: number) =>
-    setSteps(ss => ss.filter((_, idx) => idx !== i))
+  const removeSection = (si: number) =>
+    setSections(ss => ss.filter((_, i) => i !== si))
+
+  const moveSectionUp = (si: number) =>
+    setSections(ss => {
+      if (si === 0) return ss
+      const next = [...ss];
+      [next[si - 1], next[si]] = [next[si], next[si - 1]]
+      return next
+    })
+
+  const moveSectionDown = (si: number) =>
+    setSections(ss => {
+      if (si === ss.length - 1) return ss
+      const next = [...ss];
+      [next[si], next[si + 1]] = [next[si + 1], next[si]]
+      return next
+    })
+
+  const setSectionTitle = (si: number, val: string) =>
+    setSections(ss => ss.map((s, i) => i === si ? { ...s, title: val } : s))
+
+  const addSectionStep = (si: number) =>
+    setSections(ss => ss.map((s, i) => i === si ? { ...s, steps: [...s.steps, ''] } : s))
+
+  const removeSectionStep = (si: number, sj: number) =>
+    setSections(ss => ss.map((s, i) => i === si ? { ...s, steps: s.steps.filter((_, j) => j !== sj) } : s))
+
+  const setSectionStep = (si: number, sj: number, val: string) =>
+    setSections(ss => ss.map((s, i) => i === si ? { ...s, steps: s.steps.map((st, j) => j === sj ? val : st) } : s))
 
   return (
     <div className="admin-shell">
@@ -316,6 +376,29 @@ export default function AdminPage() {
                 </div>
               </div>
 
+              {/* Tags */}
+              <div className="admin-form-section">
+                <h3 className="admin-section-label">Tags <span className="admin-section-hint">— for SEO &amp; filtering (press Enter or comma to add)</span></h3>
+                <div className="admin-tag-input-wrap">
+                  {form.tags.map(tag => (
+                    <span key={tag} className="admin-tag-chip">
+                      {tag}
+                      <button className="admin-tag-chip-remove" onClick={() => removeTag(tag)} title="Remove tag">
+                        <X size={11} strokeWidth={3} />
+                      </button>
+                    </span>
+                  ))}
+                  <input
+                    className="admin-tag-input"
+                    placeholder={form.tags.length ? '' : 'e.g. healthy, eggless, quick…'}
+                    value={tagInput}
+                    onChange={e => setTagInput(e.target.value)}
+                    onKeyDown={onTagKeyDown}
+                    onBlur={() => commitTag(tagInput)}
+                  />
+                </div>
+              </div>
+
               {/* Dietary flags */}
               <div className="admin-form-section">
                 <h3 className="admin-section-label">Dietary</h3>
@@ -378,30 +461,60 @@ export default function AdminPage() {
                 </button>
               </div>
 
-              {/* Instructions — step builder */}
+              {/* Instructions — section builder */}
               <div className="admin-form-section">
                 <h3 className="admin-section-label">Instructions *</h3>
-                <div className="admin-ing-list">
-                  {steps.map((step, i) => (
-                    <div key={i} className="admin-step-row">
-                      <span className="admin-step-num">{i + 1}</span>
-                      <textarea
-                        className="admin-input admin-step-input"
-                        rows={2}
-                        placeholder={`Step ${i + 1}…`}
-                        value={step}
-                        onChange={e => setStep(i, e.target.value)}
-                      />
-                      {steps.length > 1 && (
-                        <button className="admin-ing-remove" onClick={() => removeStep(i)} title="Remove step">
-                          <X size={14} strokeWidth={2.5} />
-                        </button>
-                      )}
+                <div className="admin-sections-list">
+                  {sections.map((sec, si) => (
+                    <div key={si} className="admin-section-block">
+                      <div className="admin-section-block-header">
+                        <input
+                          className="admin-input admin-section-title-input"
+                          placeholder={sections.length > 1 ? 'Section title (e.g. Date Paste)' : 'Section title (optional)'}
+                          value={sec.title}
+                          onChange={e => setSectionTitle(si, e.target.value)}
+                        />
+                        {sections.length > 1 && (
+                          <div className="admin-section-move-btns">
+                            <button className="admin-ing-remove" onClick={() => moveSectionUp(si)} disabled={si === 0} title="Move up">
+                              <ChevronUp size={14} strokeWidth={2.5} />
+                            </button>
+                            <button className="admin-ing-remove" onClick={() => moveSectionDown(si)} disabled={si === sections.length - 1} title="Move down">
+                              <ChevronDown size={14} strokeWidth={2.5} />
+                            </button>
+                            <button className="admin-ing-remove" onClick={() => removeSection(si)} title="Remove section">
+                              <X size={14} strokeWidth={2.5} />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                      <div className="admin-ing-list">
+                        {sec.steps.map((step, sj) => (
+                          <div key={sj} className="admin-step-row">
+                            <span className="admin-step-num">{sj + 1}</span>
+                            <textarea
+                              className="admin-input admin-step-input"
+                              rows={2}
+                              placeholder={`Step ${sj + 1}…`}
+                              value={step}
+                              onChange={e => setSectionStep(si, sj, e.target.value)}
+                            />
+                            {sec.steps.length > 1 && (
+                              <button className="admin-ing-remove" onClick={() => removeSectionStep(si, sj)} title="Remove step">
+                                <X size={14} strokeWidth={2.5} />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                      <button className="btn-ghost admin-add-ing-btn" onClick={() => addSectionStep(si)}>
+                        <Plus size={13} strokeWidth={2.5} /> Add step
+                      </button>
                     </div>
                   ))}
                 </div>
-                <button className="btn-ghost admin-add-ing-btn" onClick={addStep}>
-                  <Plus size={13} strokeWidth={2.5} /> Add next step
+                <button className="btn-ghost admin-add-ing-btn admin-add-section-btn" onClick={addSection}>
+                  <Plus size={13} strokeWidth={2.5} /> Add section
                 </button>
               </div>
 

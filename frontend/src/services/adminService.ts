@@ -18,6 +18,7 @@ export interface RecipeFormData {
   dairyFree: boolean
   tags: string[]
   instructions: string
+  instructionSections: { title: string; steps: string[] }[]
   ingredients: { name: string; measure: string }[]
   nutrition: { calories: string; protein: string; carbs: string; fat: string }
 }

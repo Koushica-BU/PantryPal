@@ -8,6 +8,7 @@ function toClient(doc: IRecipe, usedCount = 0, missedCount = 0) {
     category: doc.category,
     cuisine: doc.cuisine,
     instructions: doc.instructions,
+    instructionSections: doc.instructionSections,
     thumbnail: doc.thumbnail,
     tags: doc.tags,
     sourceUrl: doc.sourceUrl,
@@ -23,13 +24,30 @@ function toClient(doc: IRecipe, usedCount = 0, missedCount = 0) {
   }
 }
 
+const STAPLES = new Set(['salt', 'sugar', 'water'])
+
+function isStaple(name: string): boolean {
+  return name.toLowerCase().split(/[\s,()]+/).some(w => STAPLES.has(w))
+}
+
 function scoreByIngredients(doc: IRecipe, searchTerms: string[]) {
-  const recipeNames = doc.ingredients.map(i => i.name.toLowerCase())
-  let used = 0
-  for (const term of searchTerms) {
-    if (recipeNames.some(n => n.includes(term) || term.includes(n))) used++
+  let rankUsed = 0    // includes staples — for filtering & sorting
+  let displayUsed = 0 // pantry matches only — for the UI badge
+  let stapleCount = 0
+
+  for (const ing of doc.ingredients) {
+    const n = ing.name.toLowerCase()
+    if (isStaple(ing.name)) {
+      stapleCount++
+      rankUsed++
+    } else if (searchTerms.some(t => n.includes(t) || t.includes(n))) {
+      rankUsed++
+      displayUsed++
+    }
   }
-  return { used, missed: doc.ingredients.length - used }
+
+  const nonStapleTotal = doc.ingredients.length - stapleCount
+  return { rankUsed, displayUsed, nonStapleTotal }
 }
 
 // ─── Search by pantry ingredients ─────────────────────────────────────────────
@@ -44,14 +62,14 @@ export async function searchByIngredients(req: Request, res: Response) {
 
     const scored = all
       .map(doc => {
-        const { used, missed } = scoreByIngredients(doc as unknown as IRecipe, terms)
-        return { doc, used, missed }
+        const s = scoreByIngredients(doc as unknown as IRecipe, terms)
+        return { doc, ...s }
       })
-      .filter(({ used }) => used > 0)
-      .sort((a, b) => b.used - a.used || a.missed - b.missed)
+      .filter(({ rankUsed, doc }) => doc.ingredients.length > 0 && rankUsed / doc.ingredients.length >= 0.25)
+      .sort((a, b) => b.rankUsed - a.rankUsed || a.nonStapleTotal - b.nonStapleTotal)
       .slice(0, Number(req.query.number) || 24)
 
-    res.json({ success: true, data: scored.map(({ doc, used, missed }) => toClient(doc as unknown as IRecipe, used, missed)) })
+    res.json({ success: true, data: scored.map(({ doc, displayUsed, nonStapleTotal }) => toClient(doc as unknown as IRecipe, displayUsed, nonStapleTotal - displayUsed)) })
   } catch (err) {
     console.error(err)
     res.status(500).json({ success: false, message: 'Failed to search recipes' })
@@ -81,13 +99,13 @@ export async function searchRecipes(req: Request, res: Response) {
 
     const results = all
       .map(doc => {
-        const { used, missed } = scoreByIngredients(doc as unknown as IRecipe, terms)
-        return { doc, used, missed }
+        const s = scoreByIngredients(doc as unknown as IRecipe, terms)
+        return { doc, ...s }
       })
-      .sort((a, b) => b.used - a.used || a.missed - b.missed)
+      .sort((a, b) => b.rankUsed - a.rankUsed || a.nonStapleTotal - b.nonStapleTotal)
       .slice(0, Number(number))
 
-    res.json({ success: true, data: results.map(({ doc, used, missed }) => toClient(doc as unknown as IRecipe, used, missed)), total: results.length })
+    res.json({ success: true, data: results.map(({ doc, displayUsed, nonStapleTotal }) => toClient(doc as unknown as IRecipe, displayUsed, nonStapleTotal - displayUsed)), total: results.length })
   } catch (err) {
     console.error(err)
     res.status(500).json({ success: false, message: 'Failed to search recipes' })

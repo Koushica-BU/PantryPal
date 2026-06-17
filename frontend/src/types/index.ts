@@ -1,11 +1,17 @@
 // ─── Recipe Types ─────────────────────────────────────────────────────────────
 
+export interface InstructionSection {
+  title?: string
+  steps: string[]
+}
+
 export interface Recipe {
   id: string
   title: string
   category: string
   cuisine: string
   instructions: string
+  instructionSections?: InstructionSection[]
   thumbnail: string
   tags: string[]
   sourceUrl: string | null

@@ -11,7 +11,7 @@ const FEATURES = [
 ]
 
 export default function LandingPage() {
-  const { darkMode, toggleDarkMode } = useStore()
+  const { darkMode, toggleDarkMode, user } = useStore()
 
   return (
     <div className="landing-root">
@@ -34,8 +34,17 @@ export default function LandingPage() {
           <button onClick={toggleDarkMode} className="landing-nav-dark-toggle">
             {darkMode ? <Sun size={14} /> : <Moon size={14} />}
           </button>
-          <Link to="/login" className="landing-nav-login">Log in</Link>
-          <Link to="/signup" className="btn-primary btn-nav-cta">Get started</Link>
+          {user ? (
+            <Link to="/profile" className="nav-user-link">
+              <div className="nav-user-avatar">{user.name[0].toUpperCase()}</div>
+              <span className="nav-user-name hidden sm:block">{user.name}</span>
+            </Link>
+          ) : (
+            <>
+              <Link to="/login" className="landing-nav-login">Log in</Link>
+              <Link to="/signup" className="btn-primary btn-nav-cta">Get started</Link>
+            </>
+          )}
         </nav>
       </div>
 
@@ -131,7 +140,6 @@ export default function LandingPage() {
       <section className="features-section">
         <div className="section-inner">
           <div className="section-header">
-            <p className="label label--mb-12">Features</p>
             <h2>Everything a home cook needs.</h2>
           </div>
           <div className="stagger features-grid">
@@ -153,7 +161,6 @@ export default function LandingPage() {
       <section className="how-it-works-section">
         <div className="section-inner">
           <div className="section-header">
-            <p className="label label--mb-12">How it works</p>
             <h2>Three steps to your next meal.</h2>
           </div>
           <div className="steps-grid">
@@ -178,7 +185,6 @@ export default function LandingPage() {
       <section className="testimonials-section">
         <div className="section-inner">
           <div className="section-header">
-            <p className="label label--mb-12">Testimonials</p>
             <h2>Real cooks. Real results.</h2>
           </div>
           <div className="testimonials-grid">

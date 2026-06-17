@@ -45,7 +45,13 @@ interface ThemeSlice {
   toggleDarkMode: () => void
 }
 
-type StoreState = AuthSlice & PantrySlice & FavouritesSlice & ShoppingSlice & MealPlanSlice & ThemeSlice
+interface OwnedIngredientsSlice {
+  ownedIngredients: Record<string, string[]>
+  toggleOwnedIngredient: (recipeId: string, name: string) => void
+  clearOwnedForRecipe: (recipeId: string) => void
+}
+
+type StoreState = AuthSlice & PantrySlice & FavouritesSlice & ShoppingSlice & MealPlanSlice & ThemeSlice & OwnedIngredientsSlice
 
 export const useStore = create<StoreState>()(
   persist(
@@ -117,6 +123,26 @@ export const useStore = create<StoreState>()(
         }),
       clearWeekPlan: () => set({ weekPlan: {} }),
 
+      // Owned ingredients (per-recipe manual ticks)
+      ownedIngredients: {},
+      toggleOwnedIngredient: (recipeId, name) =>
+        set((state) => {
+          const current = state.ownedIngredients[recipeId] ?? []
+          const has = current.includes(name)
+          return {
+            ownedIngredients: {
+              ...state.ownedIngredients,
+              [recipeId]: has ? current.filter(n => n !== name) : [...current, name],
+            },
+          }
+        }),
+      clearOwnedForRecipe: (recipeId) =>
+        set((state) => {
+          const next = { ...state.ownedIngredients }
+          delete next[recipeId]
+          return { ownedIngredients: next }
+        }),
+
       // Theme
       darkMode: false,
       toggleDarkMode: () => {
@@ -134,6 +160,7 @@ export const useStore = create<StoreState>()(
         favourites: state.favourites,
         shoppingList: state.shoppingList,
         weekPlan: state.weekPlan,
+        ownedIngredients: state.ownedIngredients,
         user: state.user,
         token: state.token,
         darkMode: state.darkMode,

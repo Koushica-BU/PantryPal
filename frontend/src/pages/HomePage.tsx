@@ -9,6 +9,7 @@ import type { Recipe, RecipeFilters } from '../types'
 import './HomePage.css'
 
 const PAGE_SIZE = 12
+const SESSION_KEY = 'pp_search_v1'
 
 export default function HomePage() {
   const { pantryItems } = useStore()
@@ -19,6 +20,20 @@ export default function HomePage() {
   const [searched, setSearched] = useState(false)
   const [filters, setFilters] = useState<RecipeFilters>({})
   const loaderRef = useRef<HTMLDivElement>(null)
+
+  // Restore previous search on mount (survives refresh + browser back)
+  useEffect(() => {
+    if (!pantryItems.length) return
+    try {
+      const raw = sessionStorage.getItem(SESSION_KEY)
+      if (!raw) return
+      const { recipes: r, filters: f } = JSON.parse(raw) as { recipes: Recipe[]; filters: RecipeFilters }
+      if (r?.length) {
+        setAllRecipes(r); setDisplayed(r.slice(0, PAGE_SIZE))
+        setFilters(f ?? {}); setSearched(true)
+      }
+    } catch { /* ignore corrupt session data */ }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const obs = new IntersectionObserver(([e]) => {
@@ -40,6 +55,7 @@ export default function HomePage() {
         ? await searchRecipes(pantryItems.map(i => i.name).join(' '), filters)
         : await searchByIngredients(pantryItems.map(i => i.name))
       setAllRecipes(r); setDisplayed(r.slice(0, PAGE_SIZE))
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify({ recipes: r, filters }))
       if (!r.length) toast('No matches — try more ingredients', { icon: '○' })
     } catch { toast.error('Connection error') }
     finally { setLoading(false) }
