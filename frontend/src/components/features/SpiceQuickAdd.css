@@ -1,0 +1,133 @@
+/* ── SpiceQuickAdd ───────────────────────── */
+
+.spice-quick-add {
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.spice-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Search input */
+.spice-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex: 1;
+  min-width: 180px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 7px 11px;
+  transition: border-color 0.15s;
+}
+
+.spice-search-wrap:focus-within {
+  border-color: var(--terra);
+}
+
+.spice-search-icon {
+  color: var(--text-4);
+  flex-shrink: 0;
+}
+
+.spice-search-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--text);
+  min-width: 0;
+}
+
+.spice-search-input::placeholder {
+  color: var(--text-4);
+}
+
+.spice-clear-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-4);
+  display: flex;
+  padding: 0;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.spice-clear-btn:hover {
+  color: var(--text-2);
+}
+
+/* Group dropdown buttons */
+.spice-group-btns {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.spice-group-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 13px;
+  border-radius: 10px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.spice-group-btn:hover {
+  border-color: var(--terra);
+  color: var(--terra);
+}
+
+.spice-group-btn--active {
+  background: var(--terra-p);
+  border-color: rgba(212, 98, 42, 0.3);
+  color: var(--terra);
+}
+
+.spice-chevron {
+  transition: transform 0.2s;
+}
+
+.spice-chevron--open {
+  transform: rotate(180deg);
+}
+
+/* Expanded panel */
+.spice-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  animation: fadeSlideDown 0.15s ease;
+}
+
+@keyframes fadeSlideDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.spice-no-results {
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--text-4);
+}

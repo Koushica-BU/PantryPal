@@ -5,13 +5,21 @@ import type { RecipeFilters } from '../../types'
 import './RecipeFiltersBar.css'
 
 const CATEGORIES = ['main course','side dish','dessert','appetizer','salad','breakfast','soup','snack']
+
+// Module-level cache — fetched once, shared across all mounts
+let _cuisines: string[] = []
+let _diets: string[] = []
+
 interface Props { filters: RecipeFilters; onChange: (f: RecipeFilters) => void }
 
 export default function RecipeFiltersBar({ filters, onChange }: Props) {
-  const [cuisines, setCuisines] = useState<string[]>([])
-  const [diets, setDiets] = useState<string[]>([])
+  const [cuisines, setCuisines] = useState<string[]>(_cuisines)
+  const [diets, setDiets] = useState<string[]>(_diets)
   const [open, setOpen] = useState(false)
-  useEffect(() => { getCuisines().then(setCuisines); getDiets().then(setDiets) }, [])
+  useEffect(() => {
+    if (!_cuisines.length) getCuisines().then(d => { _cuisines = d; setCuisines(d) })
+    if (!_diets.length)    getDiets().then(d => { _diets = d; setDiets(d) })
+  }, [])
   const count = [filters.category, filters.cuisine, filters.diet].filter(Boolean).length
 
   return (

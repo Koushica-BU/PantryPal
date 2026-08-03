@@ -426,6 +426,18 @@
 
 .instructions-card { padding: 0; overflow: hidden; }
 
+/* Empty instructions */
+.instructions-empty {
+  padding: 32px 24px !important;
+}
+
+.instructions-empty-text {
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--text-4);
+  margin-bottom: 12px;
+}
+
 /* Heart icon fill states */
 .heart-fill-active   { fill: #fff; }
 .heart-fill-inactive { fill: none; }

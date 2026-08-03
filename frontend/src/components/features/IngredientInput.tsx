@@ -1,17 +1,20 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { X, Plus, ArrowRight } from 'lucide-react'
 import { useStore } from '../../store/useStore'
 import './IngredientInput.css'
 
 const QUICK = ['Eggs','Garlic','Onion','Tomatoes','Chicken','Pasta','Rice','Butter','Milk','Cheese','Lemon','Potatoes']
 const EMOJI: Record<string, string> = { Eggs:'🥚',Garlic:'🧄',Onion:'🧅',Tomatoes:'🍅',Chicken:'🍗',Pasta:'🍝',Rice:'🍚',Butter:'🧈',Milk:'🥛',Cheese:'🧀',Lemon:'🍋',Potatoes:'🥔' }
+const STAPLES = new Set(['salt','sugar','water'])
 
 interface Props { onSearch: () => void; isLoading?: boolean }
 
 export default function IngredientInput({ onSearch, isLoading }: Props) {
   const [input, setInput] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
-  const { pantryItems, addIngredient, removeIngredient, clearPantry } = useStore()
+  const { pantryItems, addIngredient, removeIngredient, clearPantry, seedDefaultStaples } = useStore()
+
+  useEffect(() => { seedDefaultStaples() }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const add = () => {
     const name = input.trim()
@@ -78,13 +81,18 @@ export default function IngredientInput({ onSearch, isLoading }: Props) {
         </div>
       )}
 
-      <button onClick={onSearch} disabled={pantryItems.length === 0 || isLoading} className="btn-primary find-recipes-btn">
-        {isLoading ? (
-          <><div className="btn-spinner" />Finding recipes…</>
-        ) : (
-          <>Find recipes{pantryItems.length > 0 && ` · ${pantryItems.length}`} <ArrowRight size={16} strokeWidth={2.5} /></>
-        )}
-      </button>
+      {(() => {
+        const hasNonStaple = pantryItems.some(i => !STAPLES.has(i.name.toLowerCase()))
+        return (
+          <button onClick={onSearch} disabled={!hasNonStaple || !!isLoading} className="btn-primary find-recipes-btn">
+            {isLoading ? (
+              <><div className="btn-spinner" />Finding recipes…</>
+            ) : (
+              <>Find recipes{hasNonStaple && ` · ${pantryItems.length}`} <ArrowRight size={16} strokeWidth={2.5} /></>
+            )}
+          </button>
+        )
+      })()}
     </div>
   )
 }

@@ -45,13 +45,18 @@ interface ThemeSlice {
   toggleDarkMode: () => void
 }
 
+interface StaplesSlice {
+  staplesSeeded: boolean
+  seedDefaultStaples: () => void
+}
+
 interface OwnedIngredientsSlice {
   ownedIngredients: Record<string, string[]>
   toggleOwnedIngredient: (recipeId: string, name: string) => void
   clearOwnedForRecipe: (recipeId: string) => void
 }
 
-type StoreState = AuthSlice & PantrySlice & FavouritesSlice & ShoppingSlice & MealPlanSlice & ThemeSlice & OwnedIngredientsSlice
+type StoreState = AuthSlice & PantrySlice & FavouritesSlice & ShoppingSlice & MealPlanSlice & ThemeSlice & OwnedIngredientsSlice & StaplesSlice
 
 export const useStore = create<StoreState>()(
   persist(
@@ -123,6 +128,18 @@ export const useStore = create<StoreState>()(
         }),
       clearWeekPlan: () => set({ weekPlan: {} }),
 
+      // Staples seeding
+      staplesSeeded: false,
+      seedDefaultStaples: () =>
+        set((state) => {
+          if (state.staplesSeeded) return {}
+          const defaults = ['salt', 'sugar', 'water']
+          const toAdd = defaults
+            .filter(name => !state.pantryItems.some(i => i.name.toLowerCase() === name))
+            .map(name => ({ id: `staple-${name}`, name, category: 'other' as PantryCategory, addedAt: new Date().toISOString() }))
+          return { staplesSeeded: true, pantryItems: [...state.pantryItems, ...toAdd] }
+        }),
+
       // Owned ingredients (per-recipe manual ticks)
       ownedIngredients: {},
       toggleOwnedIngredient: (recipeId, name) =>
@@ -161,6 +178,7 @@ export const useStore = create<StoreState>()(
         shoppingList: state.shoppingList,
         weekPlan: state.weekPlan,
         ownedIngredients: state.ownedIngredients,
+        staplesSeeded: state.staplesSeeded,
         user: state.user,
         token: state.token,
         darkMode: state.darkMode,

@@ -180,24 +180,34 @@ export default function RecipeDetailPage() {
             </div>
           )}
 
-          {instructionSections.length > 0 && (
-            <div className="card instructions-card">
-              {instructionSections.map((sec, si) => (
-                <div key={si} className="instruction-section">
-                  {sec.title && <h3 className="instruction-section-title">{sec.title}</h3>}
-                  <ol className="instructions-list">
-                    {sec.steps.map((step, i) => (
-                      <li key={i} className="instruction-step">
-                        <span className="instruction-num">{i + 1}</span>
-                        <p className="instruction-text">{step}</p>
-                      </li>
-                    ))}
-                  </ol>
-                  {si < instructionSections.length - 1 && <hr className="instruction-section-divider" />}
-                </div>
-              ))}
-            </div>
-          )}
+          <div className="card instructions-card">
+            {instructionSections.length > 0
+              ? instructionSections.map((sec, si) => (
+                  <div key={si} className="instruction-section">
+                    {sec.title && <h3 className="instruction-section-title">{sec.title}</h3>}
+                    <ol className="instructions-list">
+                      {sec.steps.map((step, i) => (
+                        <li key={i} className="instruction-step">
+                          <span className="instruction-num">{i + 1}</span>
+                          <p className="instruction-text">{step}</p>
+                        </li>
+                      ))}
+                    </ol>
+                    {si < instructionSections.length - 1 && <hr className="instruction-section-divider" />}
+                  </div>
+                ))
+              : (
+                  <div className="instruction-section instructions-empty">
+                    <p className="instructions-empty-text">No instructions available for this recipe.</p>
+                    {recipe.sourceUrl && (
+                      <a href={recipe.sourceUrl} target="_blank" rel="noopener noreferrer" className="ingredient-source-link">
+                        <ExternalLink size={12} strokeWidth={2} /> View original recipe for instructions
+                      </a>
+                    )}
+                  </div>
+                )
+            }
+          </div>
         </div>
 
         {/* Sidebar */}

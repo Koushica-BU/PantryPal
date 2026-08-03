@@ -13,12 +13,15 @@ import AdminPage from './pages/AdminPage'
 import LoginPage from './pages/auth/LoginPage'
 import SignupPage from './pages/auth/SignupPage'
 import { useStore } from './store/useStore'
+import ErrorBoundary from './components/ErrorBoundary'
 
 function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="app-layout">
       <Navbar />
-      <main>{children}</main>
+      <main>
+        <ErrorBoundary>{children}</ErrorBoundary>
+      </main>
     </div>
   )
 }

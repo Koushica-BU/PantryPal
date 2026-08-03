@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, type KeyboardEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Pencil, Trash2, X, ChevronDown, ChevronUp, Search, Loader2 } from 'lucide-react'
+import { useDebounce } from '../hooks/useDebounce'
+import { Plus, Pencil, Trash2, X, ChevronDown, ChevronUp, Search, Loader2, UtensilsCrossed } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useStore } from '../store/useStore'
 import { adminService, type AdminRecipe, type RecipeFormData } from '../services/adminService'
@@ -12,6 +13,12 @@ const CUISINES = [
   'Greek', 'Indian', 'Irish', 'Italian', 'Japanese', 'Korean',
   'Mediterranean', 'Mexican', 'Middle Eastern', 'Spanish', 'Thai', 'Vietnamese',
 ]
+
+function AdminThumb({ src, alt }: { src?: string; alt: string }) {
+  const [err, setErr] = useState(false)
+  if (!src || err) return <div className="admin-thumb admin-thumb-placeholder"><UtensilsCrossed size={16} strokeWidth={1.5} /></div>
+  return <img src={src} alt={alt} className="admin-thumb" onError={() => setErr(true)} />
+}
 
 type Section = { title: string; steps: string[] }
 
@@ -52,10 +59,11 @@ export default function AdminPage() {
   const [saving, setSaving]               = useState(false)
   const [deleteId, setDeleteId]           = useState<string | null>(null)
 
+  const isAdmin = user?.isAdmin
   useEffect(() => {
-    if (!user?.isAdmin) { navigate('/app'); return }
+    if (!isAdmin) { navigate('/app'); return }
     load()
-  }, [user])
+  }, [isAdmin]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function load() {
     setLoading(true)
@@ -64,8 +72,9 @@ export default function AdminPage() {
     finally { setLoading(false) }
   }
 
+  const debouncedSearch = useDebounce(search, 300)
   const filtered = recipes.filter(r => {
-    const q = search.toLowerCase()
+    const q = debouncedSearch.toLowerCase()
     const matchQ = !q || r.title.toLowerCase().includes(q) || r.cuisine.toLowerCase().includes(q)
     const matchC = !filterCuisine || r.cuisine === filterCuisine
     return matchQ && matchC
@@ -271,26 +280,32 @@ export default function AdminPage() {
             <tbody>
               {filtered.map(r => (
                 <tr key={r.id} className="admin-row">
-                  <td className="admin-cell-recipe">
-                    <img src={r.thumbnail} alt={r.title} className="admin-thumb" onError={e => (e.currentTarget.style.display = 'none')} />
-                    <span className="admin-recipe-title">{r.title}</span>
+                  <td>
+                    <div className="admin-cell-recipe">
+                      <AdminThumb src={r.thumbnail} alt={r.title} />
+                      <span className="admin-recipe-title">{r.title}</span>
+                    </div>
                   </td>
                   <td><span className="admin-badge admin-badge--cuisine">{r.cuisine}</span></td>
                   <td><span className="admin-badge admin-badge--cat">{r.category}</span></td>
                   <td className="admin-cell-time">{r.readyInMinutes} min</td>
-                  <td className="admin-cell-diet">
-                    {r.vegetarian && <span className="admin-diet-tag">Veg</span>}
-                    {r.vegan      && <span className="admin-diet-tag">Vegan</span>}
-                    {r.glutenFree && <span className="admin-diet-tag">GF</span>}
-                    {r.dairyFree  && <span className="admin-diet-tag">DF</span>}
+                  <td>
+                    <div className="admin-cell-diet">
+                      {r.vegetarian && <span className="admin-diet-tag">Veg</span>}
+                      {r.vegan      && <span className="admin-diet-tag">Vegan</span>}
+                      {r.glutenFree && <span className="admin-diet-tag">GF</span>}
+                      {r.dairyFree  && <span className="admin-diet-tag">DF</span>}
+                    </div>
                   </td>
-                  <td className="admin-cell-actions">
-                    <button className="admin-action-btn" onClick={() => openEdit(r)} title="Edit">
-                      <Pencil size={14} strokeWidth={2} />
-                    </button>
-                    <button className="admin-action-btn admin-action-btn--delete" onClick={() => setDeleteId(r.id)} title="Delete">
-                      <Trash2 size={14} strokeWidth={2} />
-                    </button>
+                  <td>
+                    <div className="admin-cell-actions">
+                      <button className="admin-action-btn" onClick={() => openEdit(r)} title="Edit">
+                        <Pencil size={14} strokeWidth={2} />
+                      </button>
+                      <button className="admin-action-btn admin-action-btn--delete" onClick={() => setDeleteId(r.id)} title="Delete">
+                        <Trash2 size={14} strokeWidth={2} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

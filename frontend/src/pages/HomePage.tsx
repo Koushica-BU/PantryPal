@@ -3,6 +3,7 @@ import toast from 'react-hot-toast'
 import IngredientInput from '../components/features/IngredientInput'
 import RecipeCard from '../components/features/RecipeCard'
 import RecipeFiltersBar from '../components/features/RecipeFiltersBar'
+import SpiceQuickAdd from '../components/features/SpiceQuickAdd'
 import { searchByIngredients, searchRecipes } from '../services/recipeService'
 import { useStore } from '../store/useStore'
 import type { Recipe, RecipeFilters } from '../types'
@@ -81,7 +82,8 @@ export default function HomePage() {
 
         {searched && (
           <div>
-            <div className="results-header">
+            <SpiceQuickAdd />
+          <div className="results-header">
               <div className="results-status">
                 {loading && <div className="scanning-dot" />}
                 <span className="results-count-text">
